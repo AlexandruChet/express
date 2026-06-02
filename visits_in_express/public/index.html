@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Page</title>
+  </head>
+  <body>
+    <h1>Home</h1>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+
+    <button id="btn">Show visits</button>
+    <p id="result"></p>
+  </body>
+
+  <script>
+    const btn = document.getElementById('btn');
+    const result = document.getElementById('result');
+
+    btn.addEventListener('click', async () => {
+      const response = await fetch('/api/visits');
+      const data = await response.json();
+      result.textContent = `Visits: ${data.visits}`;
+    });
+  </script>
+</html>
