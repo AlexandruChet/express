@@ -8,17 +8,17 @@ let visits = 0;
 
 app.get('/', (req, res) => {
   visits++;
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'client', 'index.html'));
 });
 
 app.get('/about', (req, res) => {
   visits++;
-  res.sendFile(path.join(__dirname, 'public', 'about.html'));
+  res.sendFile(path.join(__dirname, 'client', 'about.html'));
 });
 
 app.get('/contact', (req, res) => {
   visits++;
-  res.sendFile(path.join(__dirname, 'public', 'contact.html'));
+  res.sendFile(path.join(__dirname, 'client', 'contact.html'));
 });
 
 app.get('/api/visits', (req, res) => {

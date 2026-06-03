@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Books</title>
+  </head>
+  <body>
+    <h1>Books</h1>
+    <a href="/about">About</a>
+    <a href="/contact">Contact</a>
+
+    <div id="books"></div>
+  </body>
+
+  <script>
+    const booksBlock = document.getElementById('books');
+
+    async function booksValues() {
+      try {
+        const response = await fetch('/api/books');
+        const data = await response.json();
+
+        const htmlBookData = data.books.map(
+          (book) => `
+          <div class="user-card" id="${book.id}">
+            <h2>${book.title}</h2>
+          </div>
+        `,
+        );
+
+        const fullHtmlBooksData = htmlBookData.join('');
+        booksBlock.innerHTML = fullHtmlBooksData;
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    }
+
+    booksValues();
+  </script>
+</html>
