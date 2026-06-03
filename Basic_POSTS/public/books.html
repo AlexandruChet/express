@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Books</title>
+  </head>
+  <body>
+    <a href="/">BACK</a>
+    <div id="books_list"></div>
+    <form action="/books" method="POST">
+      <input type="text" name="title" />
+      <button>Send</button>
+    </form>
+  </body>
+  <script>
+    const divBlockBooks = document.getElementById('books_list');
+
+    async function showBooksList() {
+      try {
+        const response = await fetch('/api/bookslist');
+        const data = await response.json();
+
+        const htmlBookData = data.books.map(
+          (book) => `
+          <div class="book-body" id="${book.id}">
+            <h2>${book.title}</h2>
+          </div>
+        `,
+        );
+
+        const fullHtmlBooksData = htmlBookData.join('');
+        divBlockBooks.innerHTML = fullHtmlBooksData;
+      } catch (err) {
+        console.log('Error', err);
+      }
+    }
+
+    showBooksList();
+  </script>
+</html>
