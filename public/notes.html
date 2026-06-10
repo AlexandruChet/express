@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Notes</h1>
+    <a href="/">Back</a>
+    <div id="notes_block"></div>
+
+    <div>
+      <h3>add note</h3>
+      <input id="note" type="text" />
+      <button id="btn">Add Note</button>
+    </div>
+  </body>
+
+  <script>
+    const notesListBlock = document.getElementById('notes_block');
+    const btn = document.getElementById('btn');
+    const newNote = document.getElementById('note');
+
+    async function getInformation() {
+      try {
+        const response = await fetch('/api/notes');
+        const data = await response.json();
+
+        const htmlNotesData = data.notes.map(
+          (note) => `
+          <div class="book-body" id="${note.id}">
+            <h2>${note.text}</h2>
+          </div>
+        `,
+        );
+
+        notesListBlock.innerHTML = htmlNotesData.join('');
+      } catch (err) {
+        console.log('Error fetching:', err);
+      }
+    }
+    getInformation();
+
+    btn.addEventListener('click', async () => {
+      const textValue = newNote.value.trim();
+      if (textValue === '') {
+        alert('Please add text');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/notes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            text: textValue,
+          }),
+        });
+
+        if (response.ok) {
+          newNote.value = '';
+          getInformation();
+        }
+      } catch (err) {
+        console.log('Error saving note:', err);
+      }
+    });
+  </script>
+</html>
