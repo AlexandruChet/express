@@ -31,6 +31,8 @@
           (note) => `
           <div class="book-body" id="${note.id}">
             <h2>${note.text}</h2>
+            <a href="/api/notes/${note.id}">Show note</a>
+            <button onclick="deleteNote(${note.id})">Delete</button>
           </div>
         `,
         );
@@ -50,7 +52,7 @@
       }
 
       try {
-        const response = await fetch('/api/notes', {
+        const response = await fetch('/api/notes/new', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -68,5 +70,15 @@
         console.log('Error saving note:', err);
       }
     });
+
+    async function deleteNote(id) {
+      try {
+        const response = await fetch(`/api/notes/delete/${id}`, { method: 'DELETE' });
+        if (response.ok) getInformation();
+        else alert('Failed to delete note');
+      } catch (err) {
+        console.log('Error deleting note:', err);
+      }
+    }
   </script>
 </html>
