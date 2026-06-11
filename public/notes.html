@@ -128,7 +128,7 @@
       #btn:hover {
         background-color: #0056b3;
       }
-    </style> // styles written by AI
+    </style>
   </head>
   <body>
     <h1>Notes</h1>
@@ -181,7 +181,7 @@
       }
 
       try {
-        const response = await fetch('/api/notes/new', {
+        const response = await fetch('/api/notes', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ text: textValue }),
