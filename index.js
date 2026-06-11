@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require("node:path")
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -12,22 +13,22 @@ const notes = [
 
 app.use(express.json());
 
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"))
+})
+
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "notes.html"))
+})
+
 app.get('/api/notes', (req, res) => {
-  res.json(notes);
+  res.json({ notes });
 });
 
-app.get('/api/notes/:id', (req, res) => {
-  const noteId = Number(req.params.id);
-
-  const note = notes.find((note) => note.id === noteId);
-
-  if (!note) {
-    return res.status(404).json({
-      message: 'Note not found',
-    });
-  }
-
-  res.json(note);
+app.get("/notes/:id", (req, res) => {
+  const targetNotes = notes.find(e => e.id === Number(req.params.id));
+  if (!targetNotes) return res.status(404).send("Not found");
+  res.send(`value: ${JSON.stringify(targetNotes.text)}`);
 });
 
 app.post('/api/notes', (req, res) => {
