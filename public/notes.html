@@ -4,6 +4,131 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          'Segoe UI',
+          Roboto,
+          sans-serif;
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 0 20px;
+        background-color: #f9f9f9;
+        color: #333;
+      }
+
+      h1,
+      h3 {
+        color: #111;
+      }
+
+      a {
+        color: #0066cc;
+        text-decoration: none;
+        font-size: 14px;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      #notes_block {
+        margin: 25px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .note-body {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border: 1px solid #eef0f2;
+      }
+
+      .note-body h2 {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 18px;
+      }
+
+      .note-body button {
+        background-color: #ff4d4d;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+      }
+
+      .note-body button:hover {
+        background-color: #cc0000;
+      }
+
+      .note-body a {
+        margin-right: 10px;
+      }
+
+      .put-div {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px dashed #ddd;
+        display: flex;
+        gap: 8px;
+      }
+
+      .put-div input {
+        flex: 1;
+        padding: 6px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .put-div button {
+        background-color: #4caf50;
+      }
+
+      .put-div button:hover {
+        background-color: #45a049;
+      }
+
+      div:last-of-type {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #eef0f2;
+        margin-top: 30px;
+      }
+
+      #note {
+        width: calc(100% - 22px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 15px;
+      }
+
+      #btn {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 15px;
+        width: 100%;
+      }
+
+      #btn:hover {
+        background-color: #0056b3;
+      }
+    </style> // styles written by AI
   </head>
   <body>
     <h1>Notes</h1>
@@ -29,12 +154,16 @@
 
         const htmlNotesData = data.notes.map(
           (note) => `
-          <div class="book-body" id="${note.id}">
-            <h2>${note.text}</h2>
-            <a href="/api/notes/${note.id}">Show note</a>
-            <button onclick="deleteNote(${note.id})">Delete</button>
+        <div class="note-body" id="${note.id}">
+          <h2>${note.text}</h2>
+          <a href="/api/notes/${note.id}">Show note</a>
+          <button onclick="deleteNote(${note.id})">Delete</button>
+          <div class="put-div">
+            <input id="new_value_${note.id}" type="text" value="${note.text}">
+            <button onclick="updateValue(${note.id})">Change</button>
           </div>
-        `,
+        </div>
+      `,
         );
 
         notesListBlock.innerHTML = htmlNotesData.join('');
@@ -54,12 +183,8 @@
       try {
         const response = await fetch('/api/notes/new', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            text: textValue,
-          }),
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: textValue }),
         });
 
         if (response.ok) {
@@ -73,11 +198,31 @@
 
     async function deleteNote(id) {
       try {
-        const response = await fetch(`/api/notes/delete/${id}`, { method: 'DELETE' });
+        const response = await fetch(`/api/notes/${id}`, {
+          method: 'DELETE',
+        });
         if (response.ok) getInformation();
-        else alert('Failed to delete note');
+        else alert('Failed to delete');
       } catch (err) {
-        console.log('Error deleting note:', err);
+        console.log('Error deleting:', err);
+      }
+    }
+
+    async function updateValue(id) {
+      const newValue = document.getElementById(`new_value_${id}`).value.trim();
+      if (newValue === '') return alert('Text cannot be empty!!!');
+
+      try {
+        const response = await fetch(`/api/notes/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text: newValue }),
+        });
+
+        if (response.ok) getInformation();
+        else alert('Error updating note');
+      } catch (err) {
+        console.log('Error updating:', err);
       }
     }
   </script>

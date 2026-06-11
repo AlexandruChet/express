@@ -4,7 +4,7 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-const notes = [
+let notes = [
   {
     id: 1,
     text: 'Learn English',
@@ -31,6 +31,12 @@ app.get('/api/notes/:id', (req, res) => {
   res.send(`value: ${JSON.stringify(targetNotes.text)}`);
 });
 
+app.get('/api/stats', (req, res) => {
+  res.json({
+    totalNotes: notes.length,
+  });
+});
+
 app.post('/api/notes/new', (req, res) => {
   const { text } = req.body;
   if (!text) return res.status(400).json({ message: 'Text is required' });
@@ -45,13 +51,15 @@ app.post('/api/notes/new', (req, res) => {
   res.status(201).json(newNote);
 });
 
-app.get('/api/stats', (req, res) => {
-  res.json({
-    totalNotes: notes.length,
-  });
+app.put('/api/notes/:id', (req, res) => {
+  const noteId = Number(req.params.id);
+  const note = notes.find((note) => note.id === noteId);
+  if (!note) return res.status(404).json({ message: 'Note not found' });
+  note.text = req.body.text;
+  res.json(note);
 });
 
-app.delete('/api/notes/delete/:id', (req, res) => {
+app.delete('/api/notes/:id', (req, res) => {
   const id = req.params.id;
   const targetId = parseInt(id);
   const index = notes.findIndex((e) => e.id === targetId);
